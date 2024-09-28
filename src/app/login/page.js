@@ -1,45 +1,28 @@
-"use client"; // Marca este archivo como un Client Component
-import styles from './page.module.css';
+"use client"; 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Usar useRouter para redirigir después del login
+import { useRouter } from 'next/navigation'; // Para redireccionar
 
 export default function Login() {
-  const [email, setEmail] = useState(''); // Almacena el email del usuario
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // Para navegar después del login
+  const router = useRouter();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
-    // Realiza la solicitud al servidor
-    const res = await fetch('http://localhost:4000/api/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Enviar el email con el nombre "username" en el body de la solicitud
-      body: JSON.stringify({ username: email, password }),
-    });
+    const fakeToken = JSON.stringify({ username: "UsuarioPrueba" });
+    localStorage.setItem('token', fakeToken);
 
-    const data = await res.json(); // Procesa la respuesta como JSON
-
-    if (res.ok && data.success) {
-      // Guarda el token en localStorage
-      localStorage.setItem('token', data.token);
-      // Redirige a la página principal después del login
-      router.push('/');
-    } else {
-      alert('Error al iniciar sesión: ' + data.message);
-    }
+    router.push('/'); 
   };
 
   return (
-    <div className={styles['login-container']}>
+    <div style={{ padding: '20px' }}>
       <h1>Iniciar Sesión</h1>
       <form onSubmit={handleLogin}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -51,7 +34,7 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Ingresar</button>
+        <button type="submit">Iniciar Sesión</button>
       </form>
     </div>
   );

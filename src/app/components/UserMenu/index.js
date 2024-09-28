@@ -1,38 +1,42 @@
-"use client"; // Asegúrate de que el archivo sea un Client Component
+"use client"; 
 import styles from './style.module.css';
-import { useState, useEffect } from 'react';
-import jwt_decode from 'jwt-decode'; // Importar jwt-decode
-import Link from 'next/link'; // Importar Link para redirigir
+import { useState, useEffect } from 'react'; 
+import Link from 'next/link'; 
 
 export default function UserMenu() {
   const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token');
-  //   if (token) {
-  //     try {
-  //       const decoded = jwt_decode(token);
-  //       setUser(decoded.username); // Ajusta según la estructura del token
-  //     } catch (error) {
-  //       console.error('Error al decodificar el token:', error);
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    // Leer directamente desde localStorage al cargar el componente
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = JSON.parse(token); // Asegúrate de que esto coincida con la estructura que guardaste
+      setUser(decoded.username); // Ajusta según la estructura del token
+    }
+  }, []); // Solo se ejecuta una vez al montar el componente
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null); // Actualiza el estado al cerrar sesión
+  };
 
   return (
     <div className={styles.userMenu}>
-    {user ? (
-      <p>Bienvenido, {user}</p>
-    ) : (
-      <div>
-        <Link href="/login">
-          <button className={styles.button}>Iniciar Sesión</button>
-        </Link>
-        <Link href="/register">
-          <button className={styles.button}>Registrarse</button>
-        </Link>
-      </div>
-    )}
-  </div>
+      {user ? (
+        <div>
+          <p>Bienvenido, {user}</p>
+          <button onClick={handleLogout} className={styles.button}>Cerrar Sesión</button>
+        </div>
+      ) : (
+        <div>
+          <Link href="/login">
+            <button className={styles.button}>Iniciar Sesión</button>
+          </Link>
+          <Link href="/register">
+            <button className={styles.button}>Registrarse</button>
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }
